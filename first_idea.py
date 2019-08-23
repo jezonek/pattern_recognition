@@ -1,15 +1,27 @@
 import examples
 import string
 import pprint
-# def principal_period(s):
-#     i = (s+s).find(s, 1, -1)
-#     return None if i == -1 else s[:i]
+from itertools import zip_longest
 
-table= {key:"d" for key in string.digits}
-letters_table= {key:"w" for key in string.ascii_letters}
-table.update(letters_table)
-pprint.pprint(table)
-trantab=str.maketrans(table)
 
-for element in examples.exp2:
-    print(element.translate(trantab))
+
+def calculate_propablity_of_type(row):
+    result={}
+    all_elements=len(row)
+    for digit in string.digits:
+        result.update({"{}".format(digit):row.count("{}".format(digit))/all_elements})
+    for letter in string.ascii_letters:
+        result.update({"{}".format(letter): row.count("{}".format(letter)) / all_elements})
+    for extra_char in string.punctuation:
+        result.update({"{}".format(extra_char): row.count("{}".format(extra_char)) / all_elements})
+    return result
+
+chars=[]
+for row in examples.exp1:
+    chars.append(list(row))
+
+main_array=list(zip_longest(*chars))
+pprint.pprint(main_array)
+list_of_propably_types=[calculate_propablity_of_type(row) for row in main_array]
+pprint.pprint(list_of_propably_types)
+
