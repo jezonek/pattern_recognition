@@ -9,11 +9,17 @@ def calculate_propablity_of_type(row):
     result = {}
     all_elements = len(row)
     for digit in string.digits:
-        result.update({"{}".format(digit): row.count("{}".format(digit)) / all_elements})
+        result.update(
+            {"{}".format(digit): row.count("{}".format(digit)) / all_elements}
+        )
     for letter in string.ascii_letters:
-        result.update({"{}".format(letter): row.count("{}".format(letter)) / all_elements})
+        result.update(
+            {"{}".format(letter): row.count("{}".format(letter)) / all_elements}
+        )
     for extra_char in string.punctuation:
-        result.update({"{}".format(extra_char): row.count("{}".format(extra_char)) / all_elements})
+        result.update(
+            {"{}".format(extra_char): row.count("{}".format(extra_char)) / all_elements}
+        )
     return result
 
 
@@ -42,10 +48,12 @@ def split_data_in_clean_and_garbage(dataset, most_common_length):
     return (final_data, garbage)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     with open("datasets/de_ibans.datasets", "r") as opened_file:
         datas = opened_file.read()
-    cleaned, garbage = split_data_in_clean_and_garbage(datas, choose_most_common_length_of_data(find_lengths_spotted_in(datas)))
+    cleaned, garbage = split_data_in_clean_and_garbage(
+        datas, choose_most_common_length_of_data(find_lengths_spotted_in(datas))
+    )
     pprint.pprint("Data excluded from analisys:{}".format(garbage))
 
     chars = []
