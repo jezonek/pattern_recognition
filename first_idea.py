@@ -8,18 +8,22 @@ from itertools import zip_longest
 def calculate_propablity_of_type(row):
     result = {}
     all_elements = len(row)
-    for digit in string.digits:
-        result.update(
-            {"{}".format(digit): row.count("{}".format(digit)) / all_elements}
-        )
-    for letter in string.ascii_letters:
-        result.update(
-            {"{}".format(letter): row.count("{}".format(letter)) / all_elements}
-        )
-    for extra_char in string.punctuation:
-        result.update(
-            {"{}".format(extra_char): row.count("{}".format(extra_char)) / all_elements}
-        )
+    #TODO dla kazdego znaku w kolumnie:
+    # okreslic typ by nie liczyc niepotrzebnych prawdopodobienstw
+    # sprawdzic czy byl on juz brany do liczenia  : jezeli tak to dodac 1 do danego elementu jezeli nie to dodac element z wartoscia 1
+
+    # for digit in string.digits:
+    #     result.update(
+    #         {"{}".format(digit): row.count("{}".format(digit)) / all_elements}
+    #     )
+    # for letter in string.ascii_letters:
+    #     result.update(
+    #         {"{}".format(letter): row.count("{}".format(letter)) / all_elements}
+    #     )
+    # for extra_char in string.punctuation:
+    #     result.update(
+    #         {"{}".format(extra_char): row.count("{}".format(extra_char)) / all_elements}
+    #     )
     return result
 
 
@@ -63,4 +67,4 @@ if __name__ == "__main__":
     main_array = list(zip_longest(*chars))
     # pprint.pprint(main_array)
     list_of_propably_types = [calculate_propablity_of_type(row) for row in main_array]
-    pprint.pprint(list_of_propably_types)
+    pprint.pprint(list_of_propably_types[0])
