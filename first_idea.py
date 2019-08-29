@@ -36,16 +36,26 @@ def calculate_propablities(row):
                     output["/W"] = row[element] / row["_all"]
     return output
 
+
 def decide_of_char(place_candidats):
     candidates = []
     for candidate in place_candidats.keys():
-        if candidate is not ("/d" or "/w" or "/W") and place_candidats[candidate] >= 0.99:
+        if (
+            candidate is not ("/d" or "/w" or "/W")
+            and place_candidats[candidate] >= 0.99
+        ):
             return candidate
-        if place_candidats[candidate] >= 0.9:
-            return candidate
+        if candidate not in ["/d", "/w", "/W"] and place_candidats[candidate] >= 0.30:
+            candidates.append(candidate)
+
+    if candidates:
+        return candidates
+    else:
+        for candidate in place_candidats.keys():
+            if place_candidats[candidate] >= 0.9:
+                return candidate
 
     return "/."
-
 
 
 def find_lengths_spotted_in(data):
@@ -79,8 +89,9 @@ def transpose_string_matrix(list_of_strings):
         chars.append(list(row))
     return list(zip_longest(*chars))
 
+
 def main():
-    with open("datasets/de_ibans.datasets", "r") as opened_file:
+    with open("datasets/exp2.datasets", "r") as opened_file:
         datas = opened_file.read()
     cleaned, garbage = split_data_in_clean_and_garbage(
         datas, choose_most_common_length_of_data(find_lengths_spotted_in(datas))
@@ -92,7 +103,7 @@ def main():
         calculate_propablities(count_chars(row)) for row in main_array
     ]
     pprint.pprint(list_of_propably_types)
-    pprint.pprint([decide_of_char(place)for place in list_of_propably_types])
+    pprint.pprint([decide_of_char(place) for place in list_of_propably_types])
 
 
 if __name__ == "__main__":
