@@ -37,7 +37,21 @@ def calculate_propablities(row):
     for element in row.keys():
         if element is not "_all":
             output.update({element: row[element] / row["_all"]})
-
+            if element in string.digits:
+                if "/d" in output.keys():
+                    output["/d"] = output["/d"] + (row[element] / row["_all"])
+                else:
+                    output["/d"] = row[element] / row["_all"]
+            if element in string.ascii_letters:
+                if "/w" in output.keys():
+                    output["/w"] = output["/w"] + (row[element] / row["_all"])
+                else:
+                    output["/w"] = row[element] / row["_all"]
+            if element in string.punctuation:
+                if "/W" in output.keys():
+                    output["/W"] = output["/W"] + (row[element] / row["_all"])
+                else:
+                    output["/W"] = row[element] / row["_all"]
     return output
 
 
@@ -82,7 +96,6 @@ if __name__ == "__main__":
     pprint.pprint("Data excluded from analisys:{}".format(garbage))
 
     main_array = transpose_string_matrix(cleaned)
-    # pprint.pprint(main_array)
     list_of_propably_types = [
         calculate_propablities(count_chars(row)) for row in main_array
     ]
