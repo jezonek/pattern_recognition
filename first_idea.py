@@ -5,13 +5,17 @@ import operator
 from itertools import zip_longest
 
 
-def calculate_propablity_of_type(row):
+def count_chars(row):
     result = {}
-    all_elements = len(row)
     #TODO dla kazdego znaku w kolumnie:
     # okreslic typ by nie liczyc niepotrzebnych prawdopodobienstw
     # sprawdzic czy byl on juz brany do liczenia  : jezeli tak to dodac 1 do danego elementu jezeli nie to dodac element z wartoscia 1
-
+    for element in row:
+        if element not in result.keys():
+            result.update({element:row.count(element)})
+    result.update({"_all":len(row)})
+    # for char in result:
+    #     result[char]=result[char]/all_elements
     # for digit in string.digits:
     #     result.update(
     #         {"{}".format(digit): row.count("{}".format(digit)) / all_elements}
@@ -25,6 +29,15 @@ def calculate_propablity_of_type(row):
     #         {"{}".format(extra_char): row.count("{}".format(extra_char)) / all_elements}
     #     )
     return result
+
+def calculate_propablities(row):
+    output={}
+    print(row.keys())
+    for element in row.keys():
+        if element is not "_all":
+            output.update({element:row[element]/row["_all"]})
+
+    return output
 
 
 def find_lengths_spotted_in(data):
@@ -49,7 +62,14 @@ def split_data_in_clean_and_garbage(dataset, most_common_length):
             final_data.append(element)
         else:
             garbage.append(element)
-    return (final_data, garbage)
+    return final_data, garbage
+
+def transpose_string_matrix(list_of_strings):
+    chars = []
+    for row in cleaned:
+        chars.append(list(row))
+    return list(zip_longest(*chars))
+
 
 
 if __name__ == "__main__":
@@ -60,11 +80,9 @@ if __name__ == "__main__":
     )
     pprint.pprint("Data excluded from analisys:{}".format(garbage))
 
-    chars = []
-    for row in cleaned:
-        chars.append(list(row))
 
-    main_array = list(zip_longest(*chars))
+
+    main_array = transpose_string_matrix(cleaned)
     # pprint.pprint(main_array)
-    list_of_propably_types = [calculate_propablity_of_type(row) for row in main_array]
-    pprint.pprint(list_of_propably_types[0])
+    list_of_propably_types = [calculate_propablities(count_chars(row)) for row in main_array]
+    pprint.pprint(list_of_propably_types)
