@@ -2,7 +2,8 @@ import examples
 import string
 import pprint
 import operator
-from itertools import zip_longest
+from itertools import zip_longest, takewhile
+from collections import deque
 
 
 def count_chars(row):
@@ -20,20 +21,20 @@ def calculate_propablities(row):
         if element is not "_all":
             output.update({element: row[element] / row["_all"]})
             if element in string.digits:
-                if "/d" in output.keys():
-                    output["/d"] = output["/d"] + (row[element] / row["_all"])
+                if "\d" in output.keys():
+                    output["\d"] = output["\d"] + (row[element] / row["_all"])
                 else:
-                    output["/d"] = row[element] / row["_all"]
+                    output["\d"] = row[element] / row["_all"]
             if element in string.ascii_letters:
-                if "/w" in output.keys():
-                    output["/w"] = output["/w"] + (row[element] / row["_all"])
+                if "\w" in output.keys():
+                    output["\w"] = output["\w"] + (row[element] / row["_all"])
                 else:
-                    output["/w"] = row[element] / row["_all"]
+                    output["\w"] = row[element] / row["_all"]
             if element in string.punctuation:
-                if "/W" in output.keys():
-                    output["/W"] = output["/W"] + (row[element] / row["_all"])
+                if "\W" in output.keys():
+                    output["\W"] = output["\W"] + (row[element] / row["_all"])
                 else:
-                    output["/W"] = row[element] / row["_all"]
+                    output["\W"] = row[element] / row["_all"]
     return output
 
 
@@ -41,11 +42,11 @@ def decide_of_char(place_candidats):
     candidates = []
     for candidate in place_candidats.keys():
         if (
-            candidate is not ("/d" or "/w" or "/W")
+            candidate is not ("\d" or "\w" or "\W")
             and place_candidats[candidate] >= 0.99
         ):
             return candidate
-        if candidate not in ["/d", "/w", "/W"] and place_candidats[candidate] >= 0.30:
+        if candidate not in ["\d", "\w", "\W"] and place_candidats[candidate] >= 0.30:
             candidates.append(candidate)
 
     if candidates:
@@ -55,7 +56,22 @@ def decide_of_char(place_candidats):
             if place_candidats[candidate] >= 0.9:
                 return candidate
 
-    return "/."
+    return "\."
+
+
+
+def find_repetions(regex_list):
+    for element in enumerate(regex_list):
+        count=1
+        for one_try in takewhile(lambda x: x==element[1],regex_list[(element[0]+1):]):
+            count=count+1
+        yield count
+
+
+
+
+
+
 
 
 def find_lengths_spotted_in(data):
@@ -103,7 +119,10 @@ def main():
         calculate_propablities(count_chars(row)) for row in main_array
     ]
     pprint.pprint(list_of_propably_types)
-    pprint.pprint([decide_of_char(place) for place in list_of_propably_types])
+    regex_list=[decide_of_char(place) for place in list_of_propably_types]
+    pprint.pprint(regex_list)
+    for element in find_repetions(regex_list):
+        print(element)
 
 
 if __name__ == "__main__":
