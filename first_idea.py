@@ -42,8 +42,8 @@ def decide_of_char(place_candidats):
     candidates = []
     for candidate in place_candidats.keys():
         if (
-            candidate is not ("\d" or "\w" or "\W")
-            and place_candidats[candidate] >= 0.99
+                candidate is not ("\d" or "\w" or "\W")
+                and place_candidats[candidate] >= 0.99
         ):
             return candidate
         if candidate not in ["\d", "\w", "\W"] and place_candidats[candidate] >= 0.30:
@@ -59,19 +59,30 @@ def decide_of_char(place_candidats):
     return "\."
 
 
-
 def find_repetions(regex_list):
     for element in enumerate(regex_list):
-        count=1
-        for one_try in takewhile(lambda x: x==element[1],regex_list[(element[0]+1):]):
-            count=count+1
+        count = 0
+        for one_try in takewhile(lambda x: x == element[1], regex_list[(element[0] + 1):]):
+            count = count + 1
         yield count
 
 
-
-
-
-
+def create_regex(regex_list):
+    content = []
+    repetitions = list(zip_longest(regex_list, find_repetions(regex_list)))
+    print(repetitions)
+    waiter=0
+    for element in repetitions:
+        if waiter>0:
+            waiter=waiter-1
+            continue
+        if element[1] > 0:
+            content.append(element[0])
+            content.append("{" + str(element[1]+1) + "}")
+            waiter=element[1]
+        else:
+            content.append(element[0])
+    return '''r"{}"$'''.format(''.join(content))
 
 
 def find_lengths_spotted_in(data):
@@ -118,11 +129,9 @@ def main():
     list_of_propably_types = [
         calculate_propablities(count_chars(row)) for row in main_array
     ]
-    pprint.pprint(list_of_propably_types)
-    regex_list=[decide_of_char(place) for place in list_of_propably_types]
-    pprint.pprint(regex_list)
-    for element in find_repetions(regex_list):
-        print(element)
+    regex_list = [decide_of_char(place) for place in list_of_propably_types]
+    # pprint.pprint(regex_list)
+    print(create_regex(regex_list))
 
 
 if __name__ == "__main__":
