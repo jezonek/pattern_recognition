@@ -64,8 +64,6 @@ def decide_of_char(place_candidats):
             and place_candidats[candidate] >= 0.98
         ):
             return candidate
-        if candidate not in ["\d", "\w", "\W"] and place_candidats[candidate] >= 0.30:
-            candidates.append(candidate)
 
     if candidates:
         return candidates
@@ -182,14 +180,7 @@ def first_selection(dataset):
     )
     pprint.pprint("Data excluded from analisys (first selection):{}".format(garbage))
 
-    main_array = transpose_string_matrix(cleaned)
-    list_of_propably_types = [
-        calculate_propabilities(count_chars(row)) for row in main_array
-    ]
-    regex_list = [decide_of_char(place) for place in list_of_propably_types]
-    final_regex = create_regex(regex_list)
-    print('''Regex: r"{}"'''.format(final_regex))
-    return final_regex, cleaned, garbage
+    return cleaned, garbage
 
 
 def second_selection(final_regex, cleaned, garbage):
@@ -220,5 +211,12 @@ if __name__ == "__main__":
     input_data_filename = "datasets/de_ibans.datasets"
     with open(input_data_filename, "r") as opened_file:
         dataset = opened_file.read()
-    generated_regex, cleaned, garbage = first_selection(dataset)
-    second_cleaned, full_garbage = second_selection(generated_regex, cleaned, garbage)
+    cleaned, garbage = first_selection(dataset)
+    main_array = transpose_string_matrix(cleaned)
+    list_of_propably_types = [
+        calculate_propabilities(count_chars(row)) for row in main_array
+    ]
+    regex_list = [decide_of_char(place) for place in list_of_propably_types]
+    final_regex = create_regex(regex_list)
+    print('''Regex: r"{}"'''.format(final_regex))
+    second_cleaned, full_garbage = second_selection(final_regex, cleaned, garbage)
