@@ -207,8 +207,7 @@ def second_selection(final_regex, cleaned, garbage):
     return new_cleaned, garbage
 
 
-if __name__ == "__main__":
-    input_data_filename = "datasets/de_ibans.datasets"
+def main(input_data_filename):
     with open(input_data_filename, "r") as opened_file:
         dataset = opened_file.read()
     cleaned, garbage = first_selection(dataset)
@@ -220,3 +219,7 @@ if __name__ == "__main__":
     final_regex = create_regex(regex_list)
     print('''Regex: r"{}"'''.format(final_regex))
     second_cleaned, full_garbage = second_selection(final_regex, cleaned, garbage)
+
+
+if __name__ == "__main__":
+    main(input_data_filename="datasets/de_ibans.datasets")
