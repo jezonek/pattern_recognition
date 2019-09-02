@@ -13,8 +13,10 @@ def count_chars(row):
     :return: Dictionary in the form of {char:the sum of the occurrences of the char}
     :rtype dict
     """
-    result=defaultdict()
-    result= {element: row.count(element) for element in row if element not in result.keys()}
+    result = defaultdict()
+    result = {
+        element: row.count(element) for element in row if element not in result.keys()
+    }
     result.update({"_all": len(row)})
     return result
 
