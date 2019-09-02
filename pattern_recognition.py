@@ -3,6 +3,7 @@ import pprint
 import operator
 import re
 from itertools import zip_longest, takewhile
+from collections import defaultdict
 
 
 def count_chars(row):
@@ -12,10 +13,8 @@ def count_chars(row):
     :return: Dictionary in the form of {char:the sum of the occurrences of the char}
     :rtype dict
     """
-    result = {}
-    for element in row:
-        if element not in result.keys():
-            result.update({element: row.count(element)})
+    result=defaultdict()
+    result= {element: row.count(element) for element in row if element not in result.keys()}
     result.update({"_all": len(row)})
     return result
 
