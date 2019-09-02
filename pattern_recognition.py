@@ -6,12 +6,12 @@ from itertools import zip_longest, takewhile
 
 
 def count_chars(row):
-    '''The function counts the occurrence of each character in a given place
+    """The function counts the occurrence of each character in a given place
     :param row: Place in origin string
     :type list
     :return: Dictionary in the form of {char:the sum of the occurrences of the char}
     :rtype dict
-    '''
+    """
     result = {}
     for element in row:
         if element not in result.keys():
@@ -21,13 +21,13 @@ def count_chars(row):
 
 
 def calculate_propabilities(row):
-    '''The function calculates the probability of characters occurrence for a given column and which
+    """The function calculates the probability of characters occurrence for a given column and which
     group (digit, letter, punctuation) appears most frequently on a given place
     :param row: The occurrence of characters
     :type dict
     :return: dict: Calculated propabilities
     :rtype: dict
-    '''
+    """
 
     output = {}
     for element in row.keys():
@@ -52,16 +52,16 @@ def calculate_propabilities(row):
 
 
 def decide_of_char(place_candidats):
-    '''The function decides whether there is a specific character, a pair of characters or a group on a given position.
+    """The function decides whether there is a specific character, a pair of characters or a group on a given position.
     :param place_candidats: Propabilities of the occurrence of an object
     :type dict
     :rtype: str
-    '''
+    """
     candidates = []
     for candidate in place_candidats.keys():
         if (
-                candidate is not ("\d" or "\w" or "\W")
-                and place_candidats[candidate] >= 0.98
+            candidate is not ("\d" or "\w" or "\W")
+            and place_candidats[candidate] >= 0.98
         ):
             return candidate
         if candidate not in ["\d", "\w", "\W"] and place_candidats[candidate] >= 0.30:
@@ -78,24 +78,27 @@ def decide_of_char(place_candidats):
 
 
 def find_repetitions(regex_list):
-    '''For each character in the list, the generator calculates successive occurrences
+    """For each character in the list, the generator calculates successive occurrences
     :param regex_list: List of consecutive objects in estimated regex
     :type list
     :return: Subsequent occurrences of a character
     :rtype: int
-    '''
+    """
     for element in enumerate(regex_list):
         count = 0
-        for one_try in takewhile(lambda x: x == element[1], regex_list[(element[0] + 1):]):
+        for one_try in takewhile(
+            lambda x: x == element[1], regex_list[(element[0] + 1) :]
+        ):
             count = count + 1
         yield count
 
 
 def create_regex(regex_list):
-    '''
-    :param regex_list:
-    :return:
-    '''
+    """For a given list, it combines successive occurrences into one
+    :param regex_list: List containing recurring occurrences
+    :return:Final regex
+    :rtype: str
+    """
     content = []
     repetitions = list(zip_longest(regex_list, find_repetitions(regex_list)))
     waiter = 0
@@ -109,16 +112,16 @@ def create_regex(regex_list):
             waiter = element[1]
         else:
             content.append(element[0])
-    return '''^{}$'''.format(''.join(content))
+    return """^{}$""".format("".join(content))
 
 
 def find_lengths_spotted_in(data):
-    '''Finds out how long the strings in a dataset are.
+    """Finds out how long the strings in a dataset are.
     :param data: whole dataset
     :type str
     :return: Dictionary in form {Length of string: Number of occurrences}
     :rtype: dict
-    '''
+    """
     found_length_values = {}
     for line in data.splitlines():
         if len(line) not in found_length_values.keys():
@@ -129,15 +132,20 @@ def find_lengths_spotted_in(data):
 
 
 def choose_most_common_length_of_data(counted_spots):
-    '''Chooses which lenght of string is most common
+    """Chooses which lenght of string is most common
     :param counted_spots: Dictionary of occurrence of length data
     :return: Most common length of string
     :rtype: str
-    '''
+    """
     return max(counted_spots.items(), key=operator.itemgetter(1))[0]
 
 
 def split_data_in_clean_and_garbage(dataset, most_common_length):
+    """Using the most common length filters out mismatched data
+
+    :param dataset: All data
+    :type str
+    """
     final_data = []
     garbage = []
     for element in dataset.splitlines():
@@ -149,10 +157,10 @@ def split_data_in_clean_and_garbage(dataset, most_common_length):
 
 
 def transpose_string_matrix(list_of_strings):
-    '''Transpose matrix of all chars
+    """Transpose matrix of all chars
     :param list_of_strings: List of given data
     :return:
-    '''
+    """
     chars = []
     for row in list_of_strings:
         chars.append(list(row))
@@ -160,6 +168,15 @@ def transpose_string_matrix(list_of_strings):
 
 
 def first_selection(dataset):
+    """For given dataset generates regex and makes first selection, based on string length
+    :param dataset: Dataset, in which each record is in a new line
+    :return: Regex
+    :rtype: str
+    :return: Pre-cleaned data
+    :rtype: list
+    :return: Initially rejected data
+    :rtype: list
+    """
     cleaned, garbage = split_data_in_clean_and_garbage(
         dataset, choose_most_common_length_of_data(find_lengths_spotted_in(dataset))
     )
@@ -176,6 +193,18 @@ def first_selection(dataset):
 
 
 def second_selection(final_regex, cleaned, garbage):
+    """Using the generated regex, it complements the set of rejected data with those that do not meet the requirements
+    :param final_regex: Generated regex
+    :type str
+    :param cleaned: Cleaned dataset
+    :type list
+    :param garbage: Rejected dataset
+    :type list
+    :return: New cleaned dataset
+    :rtype: list
+    :return: New rejected dataset
+    :rtype: list
+    """
     regex = re.compile(final_regex)
     new_cleaned = []
     for data in cleaned:
@@ -188,7 +217,7 @@ def second_selection(final_regex, cleaned, garbage):
 
 
 if __name__ == "__main__":
-    input_data_filename="datasets/de_ibans.datasets"
+    input_data_filename = "datasets/de_ibans.datasets"
     with open(input_data_filename, "r") as opened_file:
         dataset = opened_file.read()
     generated_regex, cleaned, garbage = first_selection(dataset)
