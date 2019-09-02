@@ -27,7 +27,7 @@ Script for automatic generating regex from given string list.
     * If a group occurs at 90%, it assigns this group to this place.
     * If no condition is met, return the dot.
     
-    The mechanism allows adding additional conditions, e.g. selection of several candidates at selected probabilities.
+    The mechanism allows adding next conditions, e.g. selection of several candidates at selected probabilities.
 
 1. After generating regex we check which data are not detected and add them to the pool of rejected data.
 
