@@ -22,5 +22,12 @@ Script for automatic generating regex from given string list.
 
     This allows us to calculate the frequency of occurrence of each character.
 
-1. 
+1. Knowing the frequency of occurrence of characters we determine what is in a given place:
+    * If a particular character occurs at 98%, it assigns this character to this place.
+    * If a group occurs at 90%, it assigns this group to this place.
+    * If no condition is met, return the dot.
+    
+    The mechanism allows adding additional conditions, e.g. selection of several candidates at selected probabilities.
+
+1. After generating regex we check which data are not detected and add them to the pool of rejected data.
 
