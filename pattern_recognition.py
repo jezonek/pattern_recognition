@@ -5,6 +5,12 @@ import re
 from itertools import zip_longest, takewhile
 from collections import defaultdict
 
+REGEX_WORD = "\w"
+REGEX_PUNCTUATION = "\W"
+REGEX_DIGIT = "\d"
+HIGHER_BOUND = 0.98
+LOWER_BOUND = 0.9
+
 
 def count_chars(row):
     """The function counts the occurrence of each character in a given place
@@ -34,20 +40,26 @@ def calculate_propabilities(row):
         if element is not "_all":
             output.update({element: row[element] / row["_all"]})
             if element in string.digits:
-                if "\d" in output.keys():
-                    output["\d"] = output["\d"] + (row[element] / row["_all"])
+                if REGEX_DIGIT in output.keys():
+                    output[REGEX_DIGIT] = output[REGEX_DIGIT] + (
+                        row[element] / row["_all"]
+                    )
                 else:
-                    output["\d"] = row[element] / row["_all"]
+                    output[REGEX_DIGIT] = row[element] / row["_all"]
             if element in string.ascii_letters:
-                if "\w" in output.keys():
-                    output["\w"] = output["\w"] + (row[element] / row["_all"])
+                if REGEX_WORD in output.keys():
+                    output[REGEX_WORD] = output[REGEX_WORD] + (
+                        row[element] / row["_all"]
+                    )
                 else:
-                    output["\w"] = row[element] / row["_all"]
+                    output[REGEX_WORD] = row[element] / row["_all"]
             if element in string.punctuation:
-                if "\W" in output.keys():
-                    output["\W"] = output["\W"] + (row[element] / row["_all"])
+                if REGEX_PUNCTUATION in output.keys():
+                    output[REGEX_PUNCTUATION] = output[REGEX_PUNCTUATION] + (
+                        row[element] / row["_all"]
+                    )
                 else:
-                    output["\W"] = row[element] / row["_all"]
+                    output[REGEX_PUNCTUATION] = row[element] / row["_all"]
     return output
 
 
@@ -61,7 +73,7 @@ def decide_of_char(place_candidats):
     for candidate in place_candidats.keys():
         if (
             candidate is not ("\d" or "\w" or "\W")
-            and place_candidats[candidate] >= 0.98
+            and place_candidats[candidate] >= HIGHER_BOUND
         ):
             return candidate
 
@@ -69,7 +81,7 @@ def decide_of_char(place_candidats):
         return candidates
     else:
         for candidate in place_candidats.keys():
-            if place_candidats[candidate] >= 0.9:
+            if place_candidats[candidate] >= LOWER_BOUND:
                 return candidate
 
     return "\."
