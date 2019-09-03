@@ -13,10 +13,9 @@ def count_chars(row):
     :return: Dictionary in the form of {char:the sum of the occurrences of the char}
     :rtype dict
     """
-    result = defaultdict()
-    result = {
-        element: row.count(element) for element in row if element not in result.keys()
-    }
+    result = defaultdict(int)
+    for element in row:
+        result[element] += 1
     result.update({"_all": len(row)})
     return result
 
@@ -160,9 +159,7 @@ def transpose_string_matrix(list_of_strings):
     :param list_of_strings: List of given data
     :return:
     """
-    chars = []
-    for row in list_of_strings:
-        chars.append(list(row))
+    chars = [list(row) for row in list_of_strings]
     return list(zip_longest(*chars))
 
 
@@ -200,7 +197,7 @@ def second_selection(final_regex, cleaned, garbage):
     regex = re.compile(final_regex)
     new_cleaned = []
     for data in cleaned:
-        if regex.match(data) is None:
+        if not regex.match(data):
             garbage.append(data)
         else:
             new_cleaned.append(data)
